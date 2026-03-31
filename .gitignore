@@ -1,0 +1,10 @@
+# Dataset — não versionar
+*.mat
+*.h5
+*.hdf5
+data/
+
+# MATLAB temporários
+*.asv
+*.m~
+Untitled*.m
