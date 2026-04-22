@@ -62,7 +62,7 @@ Each `.mat` file contains:
 
 
 
-\- \*\*`H`\*\* — Complex channel matrices, pre-processed from  `\[624 14 Nrx × Ntx]` to `\[28 14 Nrx × Ntx]`
+\- \*\*`H`\*\* — Complex channel matrices, pre-processed from  `\[624 14 Nrx × Ntx]` to `\[28 × Ntx x 2]`
 
 \- \*\*`H\_norm`\*\* — Standardized version of `H` used as autoencoder input
 
@@ -121,6 +121,24 @@ The script executes the following steps:
 
 
 \---
+
+\## Pre-Processing
+Autoencoders perform better without redundancies. The pre-processing remove H matrix redundancies to optimize the model results. The pre-processing comprises 5 steps:
+
+1\. Average over OFDM Symbols: It is assumed that the channel does not change drastically within the same slot and we calculated the average channel estimate over the 14 OFDM symbols changing the channel estimate matrix size from `\[624 14 Nrx × Ntx]` to `\[624 1 Nrx × Ntx]`
+
+2\. 2D Discrete Fourier Transform (2D DFT): Two Dimensional (2D) Discrete Fourier Transform (DFT) is performed over subcarriers and Tx antennas for each Rx antenna and slot to transform the channel information from the frequency-spatial domain to the time (delay-angle) one. In frequency domain, channel information is spread out while it is concentrated in few points in the time domain. 2D DFT transform the dense original measured matrix in a sparse matrix (2D DFT).
+
+3\. Truncate Delay: The matrix obtained from 2D DFT is truncated using a truncation factor to remove values that do not carry information. The truncation reduced subcarriers from 624 to 28.
+
+4\. 2D Inverse Discrete Fourier Transform (2D IDFT): 2D IDFT is applied to return to frequency domain
+
+5\. Complex to Real-Imaginary: Since autoencoders perform better with real value, the complex matrix element are split in real and imaginary parts
+
+The pre-processing is resumed in the figure below:
+
+<img width="1120" height="420" alt="8Tx4Rx_1" src="https://github.com/user-attachments/assets/68ac5810-c344-4964-b6a8-c5c7e8ad6f02" />
+
 
 
 
